@@ -1,4 +1,4 @@
-FROM docker.io/labring/kubernetes-docker:v1.21.14
+FROM docker.io/labring/kubernetes:v1.21.14
 COPY manifests ./manifests
 COPY registry ./registry
 COPY images ./images
