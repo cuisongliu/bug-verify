@@ -26,12 +26,12 @@ jobs:
           sealctl: false
       - name: Build sealos image by dockerfile
         run: |
-          sudo -u root sealos build -t testactionimage --debug sealos#2346
+          sudo -u root sealos build -t docker.io/testbuild:2364 --debug sealos#2346
 
       - name: Auto install k8s using sealos
         uses: labring/sealos-action@v0.0.2
         with:
-          image: testactionimage
+          image: docker.io/testbuild:2364
           debug: true
           type: run-k8s
       - name: Run images
