@@ -1,0 +1,5 @@
+FROM docker.io/labring/kubernetes-docker:v1.21.14
+COPY manifests ./manifests
+COPY registry ./registry
+COPY images ./images
+CMD ["kubectl apply -f manifests/tigera-operator.yaml","kubectl apply -f manifests/calico.yaml"]
