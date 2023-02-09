@@ -24,7 +24,13 @@ jobs:
           buildah: true
           debug: true
           sealctl: false
- 
+      - name: Build sealos image by dockerfile
+        uses: labring/sealos-action@v0.0.2
+        with:
+          type: build
+          image: ghcr.io/${{ github.repository_owner }}/testactionimage:dockerfile
+          debug: true
+          working-directory: sealos#2346
       
       - name: Auto install k8s using sealos
         uses: labring/sealos-action@v0.0.2
@@ -32,6 +38,11 @@ jobs:
           image: labring/kubernetes:v1.24.0
           debug: true
           type: run-k8s
+      - name: Run images
+        uses: labring/sealos-action@v0.0.2
+        with:
+          type: images
+          debug: true
       - name: After k8s operation
         run: |
           sleep 60
