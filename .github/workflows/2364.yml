@@ -25,13 +25,9 @@ jobs:
           debug: true
           sealctl: false
       - name: Build sealos image by dockerfile
-        uses: labring/sealos-action@v0.0.2
-        with:
-          type: build
-          image: ghcr.io/${{ github.repository_owner }}/testactionimage:dockerfile
-          debug: true
-          working-directory: sealos#2346
-      
+        run: |
+          sudo -u root sealos build -t testactionimage --debug sealos#2346
+
       - name: Auto install k8s using sealos
         uses: labring/sealos-action@v0.0.2
         with:
