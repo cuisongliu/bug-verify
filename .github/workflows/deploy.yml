@@ -124,6 +124,15 @@ jobs:
 
       - name: After k8s operation
         run: |
+          # wait Creating
+          kubectl get pods -oname --all-namespaces | sort | tee all.pods
+          until ! diff <(kubectl get pods -oname --all-namespaces | sort) all.pods; do
+            sleep 1
+            if kubectl get pods -owide --all-namespaces | grep -E "3m.+s" &>/dev/null; then
+              kubectl get pods -owide --all-namespaces
+              break
+            fi
+          done
           # wait Running
           until ! kubectl get pods -owide --all-namespaces | grep -vE Running; do
             sleep 5
