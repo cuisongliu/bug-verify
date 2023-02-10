@@ -70,7 +70,7 @@ jobs:
           done; done
           kubectl get pods -owide --all-namespaces
           kubectl get node -owide
-          sleep 20
+          sleep 60
           until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running; do
             sleep 5
             if kubectl get pods --no-headers --all-namespaces | grep -E "5m.+s"; then
