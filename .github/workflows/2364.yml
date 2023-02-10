@@ -2,10 +2,6 @@ name: TestBug#2364
 on:
   workflow_dispatch:
     inputs:
-      sealosPatch:
-        description: 'sealos patch image for development.'
-        required: false
-        default: ghcr.io/labring/sealos-patch:dev
 jobs:
   install-k8s:
     runs-on: ubuntu-latest
