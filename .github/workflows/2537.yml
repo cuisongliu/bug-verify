@@ -1,4 +1,4 @@
-name: TestBug#2545
+name: TestBug#2537
 on:
   workflow_dispatch:
     inputs:
