@@ -70,7 +70,7 @@ jobs:
           done; done
           kubectl get pods -owide --all-namespaces
           kubectl get node -owide
-          sleep 60
+          date
           until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running; do
             sleep 9
             kubectl get pods -owide --all-namespaces
@@ -78,7 +78,9 @@ jobs:
               break
             fi
           done
+          date
           kubectl get pods -owide --all-namespaces
+          kubectl get node -owide
       - name: Prepare
         id: prepare
         run: |
