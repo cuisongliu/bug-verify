@@ -46,7 +46,6 @@ jobs:
           sealos push  ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}-cluster
       - name: docker images
         run: |
-          docker images
           sudo sealos images
   verify:
     needs:
