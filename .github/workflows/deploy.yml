@@ -70,7 +70,7 @@ jobs:
           done; done
           # wait Creating
           kubectl get pods -oname --all-namespaces | sort | tee all.pods
-          until ! diff <(kubectl get pods -oname --all-namespaces | sort) all.pods; do
+          until ! diff <(kubectl get pods -oname --all-namespaces | sort) all.pods &>/dev/null; do
             sleep 1
             if kubectl get pods -owide --all-namespaces | grep -E "3m.+s" &>/dev/null; then
               kubectl get pods -owide --all-namespaces
