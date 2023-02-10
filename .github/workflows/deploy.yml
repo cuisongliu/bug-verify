@@ -82,7 +82,7 @@ jobs:
             sleep 5
             kubectl get pods -owide --all-namespaces | grep -vE Running
             echo;echo;echo
-            if kubectl get pods -owide --all-namespaces | grep -E "30m.+s"; then
+            if kubectl get pods -owide --all-namespaces | grep -E "30m.+s" &>/dev/null; then
               break
             fi
           done
@@ -138,7 +138,7 @@ jobs:
             sleep 5
             kubectl get pods -owide --all-namespaces | grep -vE Running
             echo;echo;echo
-            if kubectl get pods -owide --all-namespaces | grep -E "30m.+s"; then
+            if kubectl get pods -owide --all-namespaces | grep -E "30m.+s" &>/dev/null; then
               break
             fi
           done
