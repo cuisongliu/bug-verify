@@ -15,7 +15,7 @@ jobs:
         uses: labring/sealos-action@v0.0.4
         with:
           type: install-dev
-          sealosGit: https://github.com/cuisongliu/sealos.git
+          sealosGit: https://github.com/labring/sealos.git
           sealosGitBranch: main
           goAddr: https://go.dev/dl/go1.20.linux-amd64.tar.gz
           pruneCRI: true
