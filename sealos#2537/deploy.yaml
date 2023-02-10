@@ -10,8 +10,8 @@ metadata:
   namespace: account-system
 type: Opaque
 data:
-  MchID: xxxx
-  AppID: xxxxx
-  MchAPIv3Key: xxxx
-  MchCertificateSerialNumber: xxxx
-  WechatPrivateKey: xxxx
+  MchID: dGVzdAo=
+  AppID: dGVzdAo=
+  MchAPIv3Key: dGVzdAo=
+  MchCertificateSerialNumber: dGVzdAo=
+  WechatPrivateKey: dGVzdAo=
