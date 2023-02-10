@@ -24,7 +24,7 @@ jobs:
 
       - name: Auto install k8s using sealos
         run: |
-          sudo sealos run docker.io/testbuild:2364 --single --debug
+          sudo sealos run docker.io/labring/kubernetes:v1.24.1 --single --debug
 
       - name: Build sealos version
         run: |
