@@ -62,6 +62,8 @@ jobs:
       - name: Auto install k8s using sealos
         run: |
           sudo sealos run labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 --single --debug
+          sleep 20
+          sudo kubectl get nodes
           NODENAME=$(sudo kubectl get nodes -ojsonpath='{.items[0].metadata.name}')
           NODEIP=$(kubectl get nodes -ojsonpath='{.items[0].status.addresses[0].address}')
           echo "NodeName=$NODENAME,NodeIP=$NODEIP"
