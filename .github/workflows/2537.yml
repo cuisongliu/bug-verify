@@ -30,35 +30,6 @@ jobs:
         run: |
           TAG=2545
           echo tag_name=${TAG} >> $GITHUB_OUTPUT
-      - name: set up buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v2
-        with:
-          buildx-version: latest
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.G_REGISTRY_TOKEN }}
-
-      - name: build (and publish) ${{ matrix.module }} main image
-        env:
-          # fork friendly ^^
-          DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-controller
-        working-directory: sealos/controllers/${{ matrix.module }}
-        run: |
-          
-          docker buildx build \
-          --platform linux/amd64 \
-          --label "org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/bugs-verfiy" \
-          --label "org.opencontainers.image.description=sealos-${{ matrix.module }}-controller container image" \
-          --label "org.opencontainers.image.licenses=MIT" \
-          --push \
-          -t ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }} \
-          -f Dockerfile \
-          .
 
       - name: build   ${{ matrix.module }} main controller image
         env:
@@ -73,7 +44,7 @@ jobs:
           --label "org.opencontainers.image.licenses=MIT" \ 
           -f Dockerfile \
           .
-          sudo sealos push  ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}
+          sudo sealos push  ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}-cluster
       - name: docker images
         run: |
           docker images
