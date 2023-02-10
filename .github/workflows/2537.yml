@@ -9,6 +9,12 @@ jobs:
       matrix:
         module: [ user, terminal, account ]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: cuisongliu/sealos
+          ref: 'deploy'
+
       - name: Auto install sealos
         uses: labring/sealos-action@v0.0.4
         with:
@@ -16,7 +22,7 @@ jobs:
 
 
       - name: Build ${{ matrix.module }} amd64
-        working-directory: sealos/controllers/${{ matrix.module }}
+        working-directory: controllers/${{ matrix.module }}
         run: |
           GOARCH=amd64 make build
           mv bin/manager bin/controller-${{ matrix.module }}-amd64
@@ -32,7 +38,7 @@ jobs:
         env:
           # fork friendly ^^
           DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-controller
-        working-directory: sealos/controllers/${{ matrix.module }}/deploy
+        working-directory: controllers/${{ matrix.module }}/deploy
         run: |
           ls -l
           sudo sealos build --debug  -t ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}-cluster \
