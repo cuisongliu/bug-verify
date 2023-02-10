@@ -1,4 +1,4 @@
-name: TestBug#2364
+name: TestBug#2364-once
 on:
   workflow_dispatch:
     inputs:
@@ -6,8 +6,6 @@ jobs:
   install-k8s:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Trace memory
         run: |
           env
@@ -21,13 +19,9 @@ jobs:
           sealosGit: https://github.com/dinoallo/sealos.git
           sealosGitBranch: main
 
-      - name: Build sealos image by dockerfile
-        run: |
-          sudo -u root sealos build -t docker.io/testbuild:2364 --debug sealos#2346
-
       - name: Auto install k8s using sealos
         run: |
-          sudo sealos run docker.io/testbuild:2364 --single --debug
+          sudo sealos run docker.io/labring/kubernetes:v1.24.1 --single --debug
 
       - name: After k8s operation
         run: |
