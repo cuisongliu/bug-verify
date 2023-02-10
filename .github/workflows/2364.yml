@@ -18,6 +18,8 @@ jobs:
         with:
           type: install-dev
           pruneCRI: true
+          sealosGit: https://github.com/dinoallo/sealos.git
+          sealosGitBranch: main
 
       - name: Build sealos image by dockerfile
         run: |
