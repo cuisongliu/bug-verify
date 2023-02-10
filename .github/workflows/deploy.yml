@@ -68,19 +68,24 @@ jobs:
           kubectl get nodes --no-headers -oname | while read -r node; do kubectl get "$node" -o template='{{range .spec.taints}}{{.key}}{{"\n"}}{{end}}' | while read -r taint; do
             kubectl taint ${node/\// } "$taint"-
           done; done
-          kubectl get pods -owide --all-namespaces
-          kubectl get node -owide
-          sleep 9
-          date
-          until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running; do
-            sleep 5
-            echo
-            kubectl get pods -owide --all-namespaces | grep -vE Running
-            if kubectl get pods --no-headers --all-namespaces | grep -E "30m.+s"; then
+          # wait Creating
+          kubectl get pods -oname --all-namespaces | sort | tee all.pods
+          until ! diff <(kubectl get pods -oname --all-namespaces | sort) all.pods; do
+            sleep 1
+            if kubectl get pods -owide --all-namespaces | grep -E "3m.+s" &>/dev/null; then
+              kubectl get pods -owide --all-namespaces
               break
             fi
           done
-          date
+          # wait Running
+          until ! kubectl get pods -owide --all-namespaces | grep -vE Running; do
+            sleep 5
+            kubectl get pods -owide --all-namespaces | grep -vE Running
+            echo;echo;echo
+            if kubectl get pods -owide --all-namespaces | grep -E "30m.+s"; then
+              break
+            fi
+          done
           kubectl get pods -owide --all-namespaces
           kubectl get node -owide
       - name: Prepare
@@ -119,17 +124,15 @@ jobs:
 
       - name: After k8s operation
         run: |
-          sleep 9
-          date
-          until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running; do
+          # wait Running
+          until ! kubectl get pods -owide --all-namespaces | grep -vE Running; do
             sleep 5
-            echo
             kubectl get pods -owide --all-namespaces | grep -vE Running
-            if kubectl get pods --no-headers --all-namespaces | grep -E "30m.+s"; then
+            echo;echo;echo
+            if kubectl get pods -owide --all-namespaces | grep -E "30m.+s"; then
               break
             fi
           done
-          date
           kubectl get pods -owide --all-namespaces
           kubectl get node -owide
           sudo crictl ps -a
