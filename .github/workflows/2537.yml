@@ -1,0 +1,81 @@
+name: TestBug#2545
+on:
+  workflow_dispatch:
+    inputs:
+jobs:
+  image-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [ user, terminal, account ]
+    steps:
+      - name: Auto install sealos
+        uses: labring/sealos-action@v0.0.4
+        with:
+          type: install-dev
+          sealosGit: https://github.com/cuisongliu/sealos.git
+          sealosGitBranch: deploy
+          pruneCRI: false
+
+
+      - name: Build ${{ matrix.module }} amd64
+        working-directory: sealos/controllers/${{ matrix.module }}
+        run: |
+          GOARCH=amd64 make build
+          mv bin/manager bin/controller-${{ matrix.module }}-amd64
+          chmod +x bin/controller-${{ matrix.module }}-amd64
+
+      - name: Prepare
+        id: prepare
+        run: |
+          TAG=2545
+          echo tag_name=${TAG} >> $GITHUB_OUTPUT
+      - name: set up buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v2
+        with:
+          buildx-version: latest
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: build (and publish) ${{ matrix.module }} main image
+        env:
+          # fork friendly ^^
+          DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-controller
+        working-directory: sealos/controllers/${{ matrix.module }}
+        run: |
+          docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --label "org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/sealos" \
+          --label "org.opencontainers.image.description=sealos-${{ matrix.module }}-controller container image" \
+          --label "org.opencontainers.image.licenses=MIT" \
+          --push \
+          -t ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }} \
+          -f Dockerfile \
+          .
+
+      - name: build   ${{ matrix.module }} main controller image
+        env:
+          # fork friendly ^^
+          DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-controller
+        working-directory: sealos/controllers/${{ matrix.module }}
+        run: |
+          sealos build --debug -t docker.io/test/sealos-${{ matrix.module }}-controller:2537 .
+      - name: docker images
+        run: |
+          docker images
+          sudo sealos images
+
+      - name: Auto install k8s using sealos
+        run: |
+          sudo sealos run labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 --single --debug
+          sudo kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
+
+      - name: Build sealos version
+        run: |
+          sudo -u root sealos version
