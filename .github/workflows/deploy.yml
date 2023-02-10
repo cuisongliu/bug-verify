@@ -70,10 +70,10 @@ jobs:
           sudo -u root kubectl taint node $NODENAME node-role.kubernetes.io/master- || true 
           sudo -u root kubectl taint node $NODENAME node-role.kubernetes.io/control-plane- || true
       - name: Prepare
-          id: prepare
-          run: |
-            TAG=2545
-            echo tag_name=${TAG} >> $GITHUB_OUTPUT
+        id: prepare
+        run: |
+          TAG=2545
+          echo tag_name=${TAG} >> $GITHUB_OUTPUT
       - name: Auto install app using sealos
         run: |
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-user-controller:${{ steps.prepare.outputs.tag_name }}-cluster
