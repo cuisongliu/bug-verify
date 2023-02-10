@@ -18,22 +18,19 @@ jobs:
           cd /home/runner/work && tree -L 5
           free -m
       - name: Auto install sealos
-        uses: labring/sealos-action@v0.0.2
+        uses: labring/sealos-action@v0.0.4
         with:
-          sealosVersion: 4.1.5-alpha2
-          buildah: true
-          debug: true
-          sealctl: false
+          type: install-dev
+          pruneCRI: true
+
       - name: Build sealos image by dockerfile
         run: |
           sudo -u root sealos build -t docker.io/testbuild:2364 --debug sealos#2346
 
       - name: Auto install k8s using sealos
-        uses: labring/sealos-action@v0.0.2
-        with:
-          image: docker.io/testbuild:2364
-          debug: true
-          type: run-k8s
+        run: |
+          sudo sealos run docker.io/testbuild:2364 --single --debug
+
       - name: Run images
         uses: labring/sealos-action@v0.0.2
         with:
