@@ -66,6 +66,7 @@ jobs:
           DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-controller-cluster
         working-directory: sealos/controllers/${{ matrix.module }}/deploy
         run: |
+          ls -l
           sealos build --debug  -t ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }} \
           --label "org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/bugs-verfiy" \
           --label "org.opencontainers.image.description=sealos-${{ matrix.module }}-controller container image" \
