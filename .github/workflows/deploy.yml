@@ -73,7 +73,7 @@ jobs:
           kubectl get node -owide
           date
           until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running; do
-            sleep 9
+            sleep 15
             kubectl get pods -owide --all-namespaces
             if kubectl get pods --no-headers --all-namespaces | grep -E "30m.+s"; then
               break
