@@ -11,6 +11,8 @@ jobs:
   sealos:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Auto install sealos
         uses: labring/sealos-action@v0.0.4
         with:
