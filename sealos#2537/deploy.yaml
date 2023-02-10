@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: account-system
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: payment-secret
+  namespace: account-system
+type: Opaque
+data:
+  MchID: xxxx
+  AppID: xxxxx
+  MchAPIv3Key: xxxx
+  MchCertificateSerialNumber: xxxx
+  WechatPrivateKey: xxxx
