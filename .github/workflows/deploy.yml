@@ -88,18 +88,34 @@ jobs:
         run: |
           TAG=deploy
           echo tag_name=${TAG} >> $GITHUB_OUTPUT
-      - name: Auto install app using sealos
+      - name: Auto install user app using sealos
         run: |
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-user-controller:${{ steps.prepare.outputs.tag_name }}-cluster
-      - name: Auto install app using sealos
+      - name: Auto install account app using sealos
         working-directory: sealos#deploy
         run: |
           kubectl apply -f deploy.yaml
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-account-controller:${{ steps.prepare.outputs.tag_name }}-cluster
 
-      - name: Auto install app using sealos
+      - name: Auto install terminal app using sealos
         run: |
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-terminal-controller:${{ steps.prepare.outputs.tag_name }}-cluster
+      - name: Auto install metering app using sealos
+        run: |
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-metering-controller:${{ steps.prepare.outputs.tag_name }}-cluster
+      - name: Auto install infra app using sealos
+        run: |
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-infra-controller:${{ steps.prepare.outputs.tag_name }}-cluster
+      - name: Auto install cluster app using sealos
+        run: |
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-cluster-controller:${{ steps.prepare.outputs.tag_name }}-cluster
+      - name: Auto install app app using sealos
+        run: |
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-app-controller:${{ steps.prepare.outputs.tag_name }}-cluster
+      - name: Auto install imagehub app using sealos
+        run: |
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-imagehub-controller:${{ steps.prepare.outputs.tag_name }}-cluster
+      
 
       - name: After k8s operation
         run: |
