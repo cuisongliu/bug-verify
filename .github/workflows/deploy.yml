@@ -77,7 +77,7 @@ jobs:
               break
             fi
           done
-
+          kubectl get pods -owide --all-namespaces
       - name: Prepare
         id: prepare
         run: |
