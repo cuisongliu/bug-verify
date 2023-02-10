@@ -63,11 +63,11 @@ jobs:
       - name: build   ${{ matrix.module }} main controller image
         env:
           # fork friendly ^^
-          DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-controller-cluster
+          DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-controller
         working-directory: sealos/controllers/${{ matrix.module }}/deploy
         run: |
           ls -l
-          sudo sealos build --debug  -t ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }} \
+          sudo sealos build --debug  -t ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}-cluster \
           --label "org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/bugs-verfiy" \
           --label "org.opencontainers.image.description=sealos-${{ matrix.module }}-controller cluster image" \
           --label "org.opencontainers.image.licenses=MIT" \ 
