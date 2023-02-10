@@ -67,13 +67,13 @@ jobs:
         working-directory: sealos/controllers/${{ matrix.module }}/deploy
         run: |
           ls -l
-          sealos build --debug  -t ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }} \
+          sudo sealos build --debug  -t ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }} \
           --label "org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/bugs-verfiy" \
-          --label "org.opencontainers.image.description=sealos-${{ matrix.module }}-controller container image" \
+          --label "org.opencontainers.image.description=sealos-${{ matrix.module }}-controller cluster image" \
           --label "org.opencontainers.image.licenses=MIT" \ 
           -f Dockerfile \
           .
-          sealos push  ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}
+          sudo sealos push  ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}
       - name: docker images
         run: |
           docker images
