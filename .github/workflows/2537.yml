@@ -41,7 +41,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GH_TOKEN }}
+          password: ${{ secrets.G_REGISTRY_TOKEN }}
 
       - name: build (and publish) ${{ matrix.module }} main image
         env:
@@ -51,7 +51,7 @@ jobs:
         run: |
           docker buildx build \
           --platform linux/amd64,linux/arm64 \
-          --label "org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/sealos" \
+          --label "org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/bugs-verfiy" \
           --label "org.opencontainers.image.description=sealos-${{ matrix.module }}-controller container image" \
           --label "org.opencontainers.image.licenses=MIT" \
           --push \
@@ -62,20 +62,31 @@ jobs:
       - name: build   ${{ matrix.module }} main controller image
         env:
           # fork friendly ^^
-          DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-controller
-        working-directory: sealos/controllers/${{ matrix.module }}
+          DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-controller-cluster
+        working-directory: sealos/controllers/${{ matrix.module }}/deploy
         run: |
-          sealos build --debug -t docker.io/test/sealos-${{ matrix.module }}-controller:2537 .
+          sealos build --debug  -t ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }} \
+          --label "org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/bugs-verfiy" \
+          --label "org.opencontainers.image.description=sealos-${{ matrix.module }}-controller container image" \
+          --label "org.opencontainers.image.licenses=MIT" \ 
+          .
+          sealos push  ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}
       - name: docker images
         run: |
           docker images
           sudo sealos images
+  verify:
+    needs:
+      - image-build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Auto install sealos
+        uses: labring/sealos-action@v0.0.4
+        with:
+          sealosVersion: 4.1.5-alpha2
 
       - name: Auto install k8s using sealos
         run: |
           sudo sealos run labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 --single --debug
           sudo kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
-
-      - name: Build sealos version
-        run: |
-          sudo -u root sealos version
