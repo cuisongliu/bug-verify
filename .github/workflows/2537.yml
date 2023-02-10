@@ -61,4 +61,35 @@ jobs:
       - name: Auto install k8s using sealos
         run: |
           sudo sealos run labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 --single --debug
-          sudo kubectl taint nodes --all node-role.kubernetes.io/master:NoSchedule-
+          NODENAME=$(sudo kubectl get nodes -ojsonpath='{.items[0].metadata.name}')
+          NODEIP=$(kubectl get nodes -ojsonpath='{.items[0].status.addresses[0].address}')
+          echo "NodeName=$NODENAME,NodeIP=$NODEIP"
+          sudo -u root kubectl taint node $NODENAME node-role.kubernetes.io/master-
+          sudo -u root kubectl taint node $NODENAME node-role.kubernetes.io/control-plane-
+
+      - name: Auto install app using sealos
+        run: |
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-user-controller:${{ steps.prepare.outputs.tag_name }}-cluster
+      - name: Auto install app using sealos
+        run: |
+          echo "apiVersion: v1
+kind: Namespace
+metadata:
+  name: account-system
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: payment-secret
+  namespace: account-system
+type: Opaque
+data:
+  MchID: xxxx
+  AppID: xxxxx
+  MchAPIv3Key: xxxx
+  MchCertificateSerialNumber: xxxx
+  WechatPrivateKey: xxxx" | kubectl apply -f -
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-account-controller:${{ steps.prepare.outputs.tag_name }}-cluster
+      - name: Auto install app using sealos
+        run: |
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-terminal-controller:${{ steps.prepare.outputs.tag_name }}-cluster
