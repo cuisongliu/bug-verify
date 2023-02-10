@@ -1,0 +1,38 @@
+# This is a basic workflow to help you get started with Actions
+
+name: TestBug#build
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+    inputs:
+
+jobs:
+  sealos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto install sealos
+        uses: labring/sealos-action@v0.0.4
+        with:
+          type: install-dev
+          sealosGit: https://github.com/cuisongliu/sealos.git
+          sealosGitBranch: main
+          goAddr: https://go.dev/dl/go1.20.linux-amd64.tar.gz
+          pruneCRI: true
+
+      - name: Install sealos version
+        run: |
+          sudo sealos version  
+          sudo sealctl version 
+          sudo buildah version
+
+
+      - name: Build sealos image by dockerfile
+        working-directory: sealos#build/build-dockerfile
+        run: |
+          sudo sealos build -t testactionimage:dockerfile   .
+
+      - name: Build sealos image by kubefile
+        working-directory: sealos#build/build-kubefile
+        run: |
+          sudo sealos build -t testactionimage:kubefile   .

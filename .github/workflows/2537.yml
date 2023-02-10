@@ -71,6 +71,7 @@ jobs:
           --label "org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/bugs-verfiy" \
           --label "org.opencontainers.image.description=sealos-${{ matrix.module }}-controller container image" \
           --label "org.opencontainers.image.licenses=MIT" \ 
+          -f Dockerfile \
           .
           sealos push  ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}
       - name: docker images
