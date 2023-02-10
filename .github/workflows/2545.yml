@@ -1,0 +1,31 @@
+name: TestBug#2364
+on:
+  workflow_dispatch:
+    inputs:
+jobs:
+  install-k8s:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trace memory
+        run: |
+          env
+          cd /home/runner/work && tree -L 5
+          free -m
+      - name: Auto install sealos
+        uses: labring/sealos-action@v0.0.4
+        with:
+          type: install-dev
+          sealosGit: https://github.com/cdjianghan/sealos.git
+          sealosGitBranch: fixversionbug
+
+      - name: Build sealos version
+        run: |
+          sudo -u root sealos version
+
+      - name: Auto install k8s using sealos
+        run: |
+          sudo sealos run docker.io/testbuild:2364 --single --debug
+
+      - name: Build sealos version
+        run: |
+          sudo -u root sealos version
