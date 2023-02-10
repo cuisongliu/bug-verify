@@ -78,7 +78,7 @@ jobs:
             fi
           done
           # wait Running
-          until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running; do
+          until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running &>/dev/null; do
             sleep 5
             kubectl get pods -owide --all-namespaces | grep -vE Running
             echo;echo;echo
@@ -134,7 +134,7 @@ jobs:
             fi
           done
           # wait Running
-          until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running; do
+          until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running &>/dev/null; do
             sleep 5
             kubectl get pods -owide --all-namespaces | grep -vE Running
             echo;echo;echo
