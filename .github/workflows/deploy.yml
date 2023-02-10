@@ -65,6 +65,7 @@ jobs:
           mkdir -p "$HOME/.kube"
           sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
           sudo chown "$(whoami)" "$HOME/.kube/config"
+          sleep 9
           kubectl get nodes --no-headers -oname | while read -r node; do kubectl get "$node" -o template='{{range .spec.taints}}{{.key}}{{"\n"}}{{end}}' | while read -r taint; do
             kubectl taint ${node/\// } "$taint"-
           done; done
