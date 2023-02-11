@@ -6,7 +6,7 @@
 ```shell
 # wait Creating
 kubectl get pods -oname --all-namespaces | sort | tee all.pods
-until ! diff <(kubectl get pods -oname --all-namespaces | sort) all.pods; do
+until ! diff <(kubectl get pods -oname --all-namespaces | sort) all.pods &>/dev/null; do
 sleep 1
 if kubectl get pods -owide --all-namespaces | grep -E "3m.+s" &>/dev/null; then
   kubectl get pods -owide --all-namespaces
@@ -14,19 +14,18 @@ if kubectl get pods -owide --all-namespaces | grep -E "3m.+s" &>/dev/null; then
 fi
 done
 # wait Running
-until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running; do
+until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running &>/dev/null; do
 sleep 5
-kubectl get pods -owide --all-namespaces | grep -vE Running
+kubectl get pods -oname --all-namespaces | grep -vE Running
 echo;echo;echo
-if kubectl get pods -owide --all-namespaces | grep -E "30m.+s"; then
+if kubectl get pods -owide --all-namespaces | grep -E "30m.+s" &>/dev/null; then
   break
 fi
 done
 kubectl get pods -owide --all-namespaces
+echo;echo;echo
 kubectl get node -owide
-sudo crictl ps -a
-sudo cat /etc/hosts
-sudo systemctl status kubelet
+echo;echo;echo
 ```
 
 安装K8s单机模式
