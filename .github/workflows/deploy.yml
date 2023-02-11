@@ -80,7 +80,7 @@ jobs:
           # wait Running
           until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running &>/dev/null; do
             sleep 5
-            kubectl get pods --no-headers --all-namespaces | grep -vE Running
+            kubectl get pods -oname --all-namespaces | grep -vE Running
             echo;echo;echo
             if kubectl get pods -owide --all-namespaces | grep -E "30m.+s" &>/dev/null; then
               break
@@ -138,7 +138,7 @@ jobs:
           # wait Running
           until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running &>/dev/null; do
             sleep 5
-            kubectl get pods --no-headers --all-namespaces | grep -vE Running
+            kubectl get pods -oname --all-namespaces | grep -vE Running
             echo;echo;echo
             if kubectl get pods -owide --all-namespaces | grep -E "30m.+s" &>/dev/null; then
               break
