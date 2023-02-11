@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
 jobs:
-  image-build:
+  image-build-controllers:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -12,13 +12,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          repository: cuisongliu/sealos
-          ref: 'deploy'
+          repository: labring/sealos
+          ref: 'main'
 
       - name: Auto install sealos
         uses: labring/sealos-action@v0.0.4
         with:
-          sealosVersion: 4.1.5-alpha2
+          sealosVersion: 4.1.5-rc1
 
 
       - name: Build ${{ matrix.module }} amd64
@@ -47,9 +47,56 @@ jobs:
       - name: docker images
         run: |
           sudo sealos images
+
+  image-build-services:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [ auth, hub ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: labring/sealos
+          ref: 'main'
+
+      - name: Auto install sealos
+        uses: labring/sealos-action@v0.0.4
+        with:
+          sealosVersion: 4.1.5-rc1
+
+
+      - name: Build ${{ matrix.module }} amd64
+        working-directory: service/${{ matrix.module }}
+        run: |
+          GOARCH=amd64 make build
+          mv bin/manager bin/service-${{ matrix.module }}-amd64
+          chmod +x bin/service-${{ matrix.module }}-amd64
+
+      - name: Prepare
+        id: prepare
+        run: |
+          TAG=deploy
+          echo tag_name=${TAG} >> $GITHUB_OUTPUT
+
+      - name: build   ${{ matrix.module }} main controller image
+        env:
+          # fork friendly ^^
+          DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-service
+        working-directory: service/${{ matrix.module }}/deploy
+        run: |
+          ls -l
+          sealos build --debug  -t ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}-cluster .
+          sealos login -u ${{ github.repository_owner }} -p ${{ secrets.G_REGISTRY_TOKEN }} --debug ghcr.io
+          sealos push  ${DOCKER_REPO}:${{ steps.prepare.outputs.tag_name }}-cluster
+      - name: docker images
+        run: |
+          sudo sealos images
+
   verify:
     needs:
-      - image-build
+      - image-build-controllers
+      - image-build-services
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -95,34 +142,24 @@ jobs:
         run: |
           TAG=deploy
           echo tag_name=${TAG} >> $GITHUB_OUTPUT
-      - name: Auto install user app using sealos
-        run: |
-          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-user-controller:${{ steps.prepare.outputs.tag_name }}-cluster
-      - name: Auto install account app using sealos
+      - name: Auto install controllers using sealos
         working-directory: sealos#deploy
         run: |
           kubectl apply -f deploy.yaml
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-user-controller:${{ steps.prepare.outputs.tag_name }}-cluster
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-account-controller:${{ steps.prepare.outputs.tag_name }}-cluster
-
-      - name: Auto install terminal app using sealos
-        run: |
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-terminal-controller:${{ steps.prepare.outputs.tag_name }}-cluster
-      - name: Auto install metering app using sealos
-        run: |
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-metering-controller:${{ steps.prepare.outputs.tag_name }}-cluster
-      - name: Auto install infra app using sealos
-        run: |
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-infra-controller:${{ steps.prepare.outputs.tag_name }}-cluster
-      - name: Auto install cluster app using sealos
-        run: |
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-cluster-controller:${{ steps.prepare.outputs.tag_name }}-cluster
-      - name: Auto install app app using sealos
-        run: |
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-app-controller:${{ steps.prepare.outputs.tag_name }}-cluster
-      - name: Auto install imagehub app using sealos
-        run: |
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-imagehub-controller:${{ steps.prepare.outputs.tag_name }}-cluster
-      
+      - name: Auto install services using sealos
+        working-directory: sealos#deploy
+        run: |
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-auth-service:${{ steps.prepare.outputs.tag_name }}-cluster
+          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-hub-service:${{ steps.prepare.outputs.tag_name }}-cluster
+
 
       - name: After k8s operation
         run: |
