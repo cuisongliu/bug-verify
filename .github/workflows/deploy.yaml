@@ -20,14 +20,6 @@ jobs:
         with:
           sealosVersion: 4.1.5-rc1
 
-
-      - name: Build ${{ matrix.module }} amd64
-        working-directory: controllers/${{ matrix.module }}
-        run: |
-          GOARCH=amd64 make build
-          mv bin/manager bin/controller-${{ matrix.module }}-amd64
-          chmod +x bin/controller-${{ matrix.module }}-amd64
-
       - name: Prepare
         id: prepare
         run: |
@@ -65,21 +57,13 @@ jobs:
         with:
           sealosVersion: 4.1.5-rc1
 
-
-      - name: Build ${{ matrix.module }} amd64
-        working-directory: service/${{ matrix.module }}
-        run: |
-          GOARCH=amd64 make build
-          mv bin/manager bin/service-${{ matrix.module }}-amd64
-          chmod +x bin/service-${{ matrix.module }}-amd64
-
       - name: Prepare
         id: prepare
         run: |
           TAG=deploy
           echo tag_name=${TAG} >> $GITHUB_OUTPUT
 
-      - name: build   ${{ matrix.module }} main controller image
+      - name: build   ${{ matrix.module }} main service image
         env:
           # fork friendly ^^
           DOCKER_REPO: ghcr.io/${{ github.repository_owner }}/sealos-${{ matrix.module }}-service
