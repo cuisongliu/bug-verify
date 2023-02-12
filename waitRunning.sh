@@ -2,8 +2,8 @@
 
 set -e
 
-readonly C_TIMEOUT=${1:-1m}
-readonly R_TIMEOUT=${2:-5m}
+readonly C_TIMEOUT=${1:-1}
+readonly R_TIMEOUT=${2:-5}
 
 echo "CheckCreating(timeout=$C_TIMEOUT), CheckRunning(timeout=$R_TIMEOUT)"
 
@@ -13,9 +13,8 @@ function checker() {
   until ! diff <(kubectl get pods -oname --all-namespaces | sort) "all.$HOSTNAME.pods" &>/dev/null; do
     sleep 3
     # timeout
-    if kubectl get pods -owide --all-namespaces | grep -E "$C_TIMEOUT.+s" &>/dev/null; then break; fi
+    if ! find . -type f -name "all.$HOSTNAME.pods" -mmin -"$C_TIMEOUT" | grep "all.$HOSTNAME.pods" &>/dev/null; then exit 8; fi
   done
-  rm -f "all.$HOSTNAME.pods"
   # for Running
   until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running &>/dev/null; do
     sleep 9
@@ -23,8 +22,9 @@ function checker() {
       echo
     fi
     # timeout
-    if kubectl get pods -owide --all-namespaces | grep -E "$R_TIMEOUT.+s" &>/dev/null; then break; fi
+    if ! find . -type f -name "all.$HOSTNAME.pods" -mmin -"$R_TIMEOUT" | grep "all.$HOSTNAME.pods" &>/dev/null; then exit 88; fi
   done
+  rm -f "all.$HOSTNAME.pods"
 }
 
 if kubectl version; then
