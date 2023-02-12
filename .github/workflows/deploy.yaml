@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        module: [ auth, hub ]
+        module: [ auth ]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -121,7 +121,6 @@ jobs:
         working-directory: sealos#deploy
         run: |
           sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-auth-service:${{ steps.prepare.outputs.tag_name }}-cluster
-          sudo sealos run ghcr.io/${{ github.repository_owner }}/sealos-hub-service:${{ steps.prepare.outputs.tag_name }}-cluster
 
 
       - name: After k8s operation
