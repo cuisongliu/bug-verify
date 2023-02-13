@@ -12,8 +12,8 @@ jobs:
         uses: labring/sealos-action@v0.0.4
         with:
           type: install-dev
-          sealosGit: https://github.com/cuisongliu/sealos.git
-          sealosGitBranch: hack
+          sealosGit: https://github.com/fengxsong/sealos.git
+          sealosGitBranch: feat_2562
           pruneCRI: true
 
       - name: Auto install k8s using sealos
@@ -43,8 +43,8 @@ jobs:
         uses: labring/sealos-action@v0.0.4
         with:
           type: install-dev
-          sealosGit: https://github.com/cuisongliu/sealos.git
-          sealosGitBranch: hack
+          sealosGit: https://github.com/fengxsong/sealos.git
+          sealosGitBranch: feat_2562
           pruneCRI: true
       - name: build new image
         working-directory: sealos#podip
