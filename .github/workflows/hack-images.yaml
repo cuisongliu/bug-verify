@@ -26,6 +26,7 @@ jobs:
             kubectl taint ${node/\// } "$taint"-
           done; done
           kubectl get svc
+          sudo cat $HOME/.sealos/default/etc/kubeadm-init.yaml
       - name: After k8s operation
         run: |
           bash waitRunning.sh
@@ -60,6 +61,7 @@ jobs:
             kubectl taint ${node/\// } "$taint"-
           done; done
           kubectl get svc
+          sudo cat $HOME/.sealos/default/etc/kubeadm-init.yaml
       - name: After k8s operation
         run: |
           bash waitRunning.sh
