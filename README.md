@@ -23,14 +23,6 @@ function checker() {
   done
   rm -f "all.$HOSTNAME.pods"
 }
-
-if kubectl version; then
-  kubectl get pods -owide --all-namespaces
-  kubectl get node -owide
-  checker
-  kubectl get pods -owide --all-namespaces
-  kubectl get node -owide
-fi
 ```
 
 安装K8s单机模式
@@ -42,4 +34,9 @@ sudo chown "$(whoami)" "$HOME/.kube/config"
 kubectl get nodes --no-headers -oname | while read -r node; do kubectl get "$node" -o template='{{range .spec.taints}}{{.key}}{{"\n"}}{{end}}' | while read -r taint; do
 kubectl taint ${node/\// } "$taint"-
 done; done
+if kubectl version; then
+  checker
+fi
+kubectl get pods -owide --all-namespaces
+kubectl get node -owide
 ```
