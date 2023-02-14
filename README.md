@@ -46,7 +46,7 @@ fi
 ```shell
 sudo sealos run labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 labring/cert-manager:v1.8.0 --single --debug
 mkdir -p "$HOME/.kube"
-sudo cp -a /etc/kubernetes/admin.conf "$HOME/.kube/config"
+sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
 sudo chown "$(whoami)" "$HOME/.kube/config"
 kubectl get nodes --no-headers -oname | while read -r node; do kubectl get "$node" -o template='{{range .spec.taints}}{{.key}}{{"\n"}}{{end}}' | while read -r taint; do
 kubectl taint ${node/\// } "$taint"-
