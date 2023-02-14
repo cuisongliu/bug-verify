@@ -4,35 +4,49 @@
 等待pod启动完成:
 
 ```shell
-# wait Creating
-kubectl get pods -oname --all-namespaces | sort | tee all.pods
-until ! diff <(kubectl get pods -oname --all-namespaces | sort) all.pods &>/dev/null; do
-sleep 1
-if kubectl get pods -owide --all-namespaces | grep -E "3m.+s" &>/dev/null; then
+#!/bin/bash
+
+set -e
+
+readonly C_TIMEOUT=${1:-1}
+readonly R_TIMEOUT=${2:-5}
+
+echo "CheckCreating(timeout=$C_TIMEOUT), CheckRunning(timeout=$R_TIMEOUT)"
+
+function checker() {
+  # for Creating
+  kubectl get pods -oname --all-namespaces | sort >"all.$HOSTNAME.pods"
+  until ! diff <(kubectl get pods -oname --all-namespaces | sort) "all.$HOSTNAME.pods" &>/dev/null; do
+    sleep 3
+    # timeout
+    if ! find . -type f -name "all.$HOSTNAME.pods" -mmin -"$C_TIMEOUT" | grep "all.$HOSTNAME.pods" &>/dev/null; then exit 8; fi
+  done
+  # for Running
+  until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running &>/dev/null; do
+    sleep 9
+    if kubectl get pods --no-headers --all-namespaces | grep -vE Running; then
+      echo
+    fi
+    # timeout
+    if ! find . -type f -name "all.$HOSTNAME.pods" -mmin -"$R_TIMEOUT" | grep "all.$HOSTNAME.pods" &>/dev/null; then exit 88; fi
+  done
+  rm -f "all.$HOSTNAME.pods"
+}
+
+if kubectl version; then
   kubectl get pods -owide --all-namespaces
-  break
+  kubectl get node -owide
+  checker
+  kubectl get pods -owide --all-namespaces
+  kubectl get node -owide
 fi
-done
-# wait Running
-until ! kubectl get pods --no-headers --all-namespaces | grep -vE Running &>/dev/null; do
-sleep 5
-kubectl get pods -oname --all-namespaces | grep -vE Running
-echo;echo;echo
-if kubectl get pods -owide --all-namespaces | grep -E "30m.+s" &>/dev/null; then
-  break
-fi
-done
-kubectl get pods -owide --all-namespaces
-echo;echo;echo
-kubectl get node -owide
-echo;echo;echo
 ```
 
 安装K8s单机模式
 ```shell
 sudo sealos run labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 labring/cert-manager:v1.8.0 --single --debug
 mkdir -p "$HOME/.kube"
-sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
+sudo cp -a /etc/kubernetes/admin.conf "$HOME/.kube/config"
 sudo chown "$(whoami)" "$HOME/.kube/config"
 kubectl get nodes --no-headers -oname | while read -r node; do kubectl get "$node" -o template='{{range .spec.taints}}{{.key}}{{"\n"}}{{end}}' | while read -r taint; do
 kubectl taint ${node/\// } "$taint"-
