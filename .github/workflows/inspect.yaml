@@ -53,6 +53,7 @@ jobs:
         run: |
           sudo sealos pull labring/kubernetes:v1.23.8
           sudo sealos inspect labring/kubernetes:v1.23.8
+          sudo sealos inspect docker://labring/kubernetes:v1.24.0
           sudo sealos inspect oci-archive:oci/alpine.tar
           sudo sealos inspect docker-archive:docker/alpine.tar
   verify-gen:
