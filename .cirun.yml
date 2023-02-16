@@ -8,6 +8,6 @@ runners:
     region:
       - "us-east-1"
     # arm64 architecture spot instances may not be created smoothly
-    preemptible: false
+    preemptible: true
     labels:
       - "cirun-aws-arm64-8c-5"
