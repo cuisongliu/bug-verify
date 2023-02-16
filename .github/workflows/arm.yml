@@ -23,7 +23,7 @@ jobs:
 
       - name: Build sealos image by kubefile
         run: |
-          sudo sealos run labring/kubernetes:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 labring/cert-manager:v1.8.0 --single --debug
+          sudo sealos run labring/kubernetes:v1.22.0-4.1.4 labring/helm:v3.8.2 labring/calico:v3.24.1 labring/cert-manager:v1.8.0 --single --debug
           mkdir -p "$HOME/.kube"
           sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
           sudo chown "$(whoami)" "$HOME/.kube/config"
