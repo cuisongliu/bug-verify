@@ -30,4 +30,4 @@ jobs:
           kubectl get nodes --no-headers -oname | while read -r node; do kubectl get "$node" -o template='{{range .spec.taints}}{{.key}}{{"\n"}}{{end}}' | while read -r taint; do
             kubectl taint ${node/\// } "$taint"-
           done; done
-          bash waitRunning.sh
+          md5sum /var/lib/sealos/data/default/rootfs/opt/sealctl
