@@ -1,0 +1,61 @@
+runners:
+  - name: "aws-arm64-8c16g-5"
+    cloud: "aws"
+    instance_type:
+      - "a1.2xlarge"
+    machine_image:
+      - "ami-0f9bd9098aca2d42b"
+    region:
+      - "us-east-2"
+      - "us-east-2"
+      - "us-east-2"
+      - "us-east-2"
+
+      - "us-west-1"
+      - "us-west-1"
+      - "us-west-1"
+      - "us-west-1"
+
+      - "us-west-2"
+      - "us-west-2"
+      - "us-west-2"
+      - "us-west-2"
+
+      - "en-west-1"
+      - "en-west-1"
+      - "en-west-1"
+      - "en-west-1"
+    # arm64 architecture spot instances may not be created smoothly
+    preemptible: false
+    labels:
+      - "cirun-aws-arm64-8c-5"
+  - name: "aws-arm64-8c16g-4"
+    cloud: "aws"
+    instance_type:
+      - "a1.2xlarge"
+    machine_image:
+      - "ami-054cb116359624aa3"
+    region:
+      - "us-east-2"
+      - "us-east-2"
+      - "us-east-2"
+      - "us-east-2"
+
+      - "us-west-1"
+      - "us-west-1"
+      - "us-west-1"
+      - "us-west-1"
+
+      - "us-west-2"
+      - "us-west-2"
+      - "us-west-2"
+      - "us-west-2"
+
+      - "en-west-1"
+      - "en-west-1"
+      - "en-west-1"
+      - "en-west-1"
+    # arm64 architecture spot instances may not be created smoothly
+    preemptible: false
+    labels:
+      - "cirun-aws-arm64-8c-4"
