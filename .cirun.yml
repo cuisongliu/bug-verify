@@ -4,7 +4,7 @@ runners:
     instance_type:
       - "a1.2xlarge"
     machine_image:
-      - "ami-0f9bd9098aca2d42b"
+      - "ami-0e8547f67811921d6"
     region:
       - "us-east-1"
     # arm64 architecture spot instances may not be created smoothly
@@ -16,7 +16,7 @@ runners:
     instance_type:
       - "a1.2xlarge"
     machine_image:
-      - "ami-054cb116359624aa3"
+      - "ami-035cb1181281805d0"
     region:
       - "us-east-1"
     # arm64 architecture spot instances may not be created smoothly
