@@ -53,7 +53,7 @@ jobs:
           sealosGitBranch: merge
           pruneCRI: false
       - name: build new image
-        working-directory: sealos#podip
+        working-directory: sealos#podip-docker
         run: |
           CRI_TYPE=docker
           dpkg-query --search "$(command -v containerd)" "$(command -v docker)"
