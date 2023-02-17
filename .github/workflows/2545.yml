@@ -11,7 +11,8 @@ jobs:
           env
           cd /home/runner/work && tree -L 5
           free -m
-          ip addr
+          local_ip=`ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"​`
+          echo "${local_ip}"
       - name: Auto install sealos
         uses: labring/sealos-action@v0.0.4
         with:
