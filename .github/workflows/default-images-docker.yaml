@@ -15,6 +15,13 @@ jobs:
 
       - name: Auto install k8s using sealos
         run: |
+          CRI_TYPE=docker
+          dpkg-query --search "$(command -v containerd)" "$(command -v docker)"
+          sudo apt-get remove -y moby-buildx moby-cli moby-compose moby-containerd moby-engine &>/dev/null
+          sudo systemctl unmask "${CRI_TYPE//-/}" || true
+          sudo mkdir -p /sys/fs/cgroup/systemd
+          sudo mount -t cgroup -o none,name=systemd cgroup /sys/fs/cgroup/systemd || true
+          
           sudo sealos run labring/kubernetes-docker:v1.25.0 labring/helm:v3.8.2 labring/calico:v3.24.1 --single --debug
           mkdir -p "$HOME/.kube"
           sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
@@ -43,6 +50,12 @@ jobs:
       - name: build new image
         working-directory: sealos#podip
         run: |
+          CRI_TYPE=docker
+          dpkg-query --search "$(command -v containerd)" "$(command -v docker)"
+          sudo apt-get remove -y moby-buildx moby-cli moby-compose moby-containerd moby-engine &>/dev/null
+          sudo systemctl unmask "${CRI_TYPE//-/}" || true
+          sudo mkdir -p /sys/fs/cgroup/systemd
+          sudo mount -t cgroup -o none,name=systemd cgroup /sys/fs/cgroup/systemd || true
           sudo sealos build --debug -t hack:dev   .
 
       - name: Auto install k8s using sealos
