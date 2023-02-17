@@ -1,0 +1,2 @@
+FROM labring/kubernetes-docker:v1.25.0
+COPY kubeadm.yml etc/
