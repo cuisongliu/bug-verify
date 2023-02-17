@@ -14,7 +14,7 @@ jobs:
           type: install-dev
           sealosGit: https://github.com/cuisongliu/sealos.git
           sealosGitBranch: merge
-          pruneCRI: true
+          pruneCRI: false
 
       - name: Auto install k8s using sealos
         run: |
@@ -51,7 +51,7 @@ jobs:
           type: install-dev
           sealosGit: https://github.com/cuisongliu/sealos.git
           sealosGitBranch: merge
-          pruneCRI: true
+          pruneCRI: false
       - name: build new image
         working-directory: sealos#podip
         run: |
