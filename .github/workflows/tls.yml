@@ -24,9 +24,9 @@ jobs:
       - name: Build sealos version
         run: |
           sudo -u root sealos version
-          set -x
           sudo cat /root/.sealos/default/etc/kubeadm-init.yaml
           sudo cat /root/.sealos/default/Clusterfile
-          sudo cat /var/lib/kubelet/config.yaml 
-          sudo cat /etc/kubernetes/manifests/kube-apiserver.yaml  
-          sudo cat /etc/kubernetes/manifests/etcd.yaml  
+          set -e
+          sudo cat /var/lib/kubelet/config.yaml | grep TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+          sudo cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+          sudo cat /etc/kubernetes/manifests/etcd.yaml | grep TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
