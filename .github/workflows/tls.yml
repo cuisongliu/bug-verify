@@ -24,6 +24,9 @@ jobs:
       - name: Build sealos version
         run: |
           sudo -u root sealos version
-          sudo cat /var/lib/kubelet/config.yaml | grep tlsCipherSuites
-          sudo cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep tls-cipher-suites
-          sudo cat /etc/kubernetes/manifests/etcd.yaml | grep cipher-suites
+          set -x
+          sudo cat /root/.sealos/default/etc/kubeadm-init.yaml
+          sudo cat /root/.sealos/default/Clusterfile
+          sudo cat /var/lib/kubelet/config.yaml 
+          sudo cat /etc/kubernetes/manifests/kube-apiserver.yaml  
+          sudo cat /etc/kubernetes/manifests/etcd.yaml  
