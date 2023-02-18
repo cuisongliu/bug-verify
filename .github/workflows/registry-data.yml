@@ -29,4 +29,4 @@ jobs:
       - name: Build sealos image by kubefile
         working-directory: sealos#build/build-kubefile
         run: |
-          sealos run --cluster-root=/data/sealos/  --env criData=/data/cri/lib/containerd labring/kubernetes:v1.24.0  --single --debug
+          sudo sealos run --cluster-root=/data/sealos/  --env criData=/data/cri/lib/containerd labring/kubernetes:v1.24.0  --single --debug
