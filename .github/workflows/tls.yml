@@ -19,14 +19,5 @@ jobs:
 
       - name: Auto install k8s using sealos
         run: |
-          sudo sealos run docker.io/labring/kubernetes:v1.24.1 --single --debug
+          sudo sealos gen docker.io/labring/kubernetes:v1.24.1 --masters 127.0.0.1 --debug
 
-      - name: Build sealos version
-        run: |
-          sudo -u root sealos version
-          sudo cat /root/.sealos/default/etc/kubeadm-init.yaml
-          sudo cat /root/.sealos/default/Clusterfile
-          set -e
-          sudo cat /var/lib/kubelet/config.yaml | grep TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
-          sudo cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
-          sudo cat /etc/kubernetes/manifests/etcd.yaml | grep TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
