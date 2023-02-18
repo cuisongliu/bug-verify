@@ -32,5 +32,4 @@ jobs:
           sealos run \
           --cluster-root=/data/sealos/ \
           --env criData=/data/cri/lib/containerd \
-          --env registryData=/data/cri/lib/registry \
           labring/kubernetes:v1.24.0  --single --debug
