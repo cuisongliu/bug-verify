@@ -1,0 +1,29 @@
+name: TestBug#tls-args-default
+on:
+  workflow_dispatch:
+    inputs:
+jobs:
+  install-k8s:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto install sealos
+        uses: labring/sealos-action@v0.0.4
+        with:
+          type: install-dev
+          sealosGit: https://github.com/cuisongliu/sealos.git
+          sealosGitBranch: default_tls
+
+      - name: Build sealos version
+        run: |
+          sudo -u root sealos version
+
+      - name: Auto install k8s using sealos
+        run: |
+          sudo sealos run docker.io/labring/kubernetes:v1.24.1 --single --debug
+
+      - name: Build sealos version
+        run: |
+          sudo -u root sealos version
+          sudo cat /var/lib/kubelet/config.yaml | grep tlsCipherSuites
+          sudo cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep tls-cipher-suites
+          sudo cat /etc/kubernetes/manifests/etcd.yaml | grep cipher-suites
