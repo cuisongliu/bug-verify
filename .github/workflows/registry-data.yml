@@ -1,0 +1,36 @@
+# This is a basic workflow to help you get started with Actions
+
+name: TestBug#registryData
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+    inputs:
+
+jobs:
+  sealos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Auto install sealos
+        uses: labring/sealos-action@v0.0.4
+        with:
+          type: install
+          sealosVersion: 4.1.5-rc1
+
+      - name: Install sealos version
+        run: |
+          sudo sealos version  
+          sudo sealctl version 
+          sudo buildah version
+
+
+      - name: Build sealos image by kubefile
+        working-directory: sealos#build/build-kubefile
+        run: |
+          sealos run \
+          --cluster-root=/data/sealos/ \
+          --env criData=/data/cri/lib/containerd \
+          --env registryData=/data/cri/lib/registry \
+          labring/kubernetes:v1.24.0  --single --debug
