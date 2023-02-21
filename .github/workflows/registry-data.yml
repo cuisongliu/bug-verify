@@ -8,7 +8,7 @@ on:
     inputs:
 
 jobs:
-  sealos:
+  sealos-containerd:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,7 +17,7 @@ jobs:
         uses: labring/sealos-action@v0.0.4
         with:
           type: install
-          sealosVersion: 4.1.5-rc1
+          sealosVersion: 4.1.5-rc2
 
       - name: Install sealos version
         run: |
@@ -30,3 +30,55 @@ jobs:
         working-directory: sealos#build/build-kubefile
         run: |
           sudo sealos run --cluster-root=/data/sealos/  --env criData=/data/cri/lib/containerd --env registryData=/data/cri/lib/registry labring/kubernetes:v1.24.0  --single --debug
+
+  sealos-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Auto install sealos
+        uses: labring/sealos-action@v0.0.4
+        with:
+          type: install
+          sealosVersion: 4.1.5-rc2
+      - name: Remove containerd && docker
+        uses: labring/sealos-action@v0.0.7
+        with:
+          type: prune
+      - name: Install sealos version
+        run: |
+          sudo sealos version  
+          sudo sealctl version 
+          sudo buildah version
+
+
+      - name: install cluster by clusterfile
+        working-directory: sealos#build/build-kubefile
+        run: |
+          local_ip=`ip addr | grep inet | grep -v inet6 | grep -v docker |grep -v host | awk '{print $2}' | awk -F '/' '{print $1}'`
+          echo "local ip is : ${local_ip}"
+          
+          mkdir -p /tmp/apply
+          cat > /tmp/apply/Clusterfile <<EOF
+          apiVersion: apps.sealos.io/v1beta1
+          kind: Cluster
+          metadata:
+            name: default
+          spec:
+            env:
+            - criData=/data/cri/lib/docker
+            - registryData=/data/cri/lib/registry
+            hosts:
+              - ips:
+                  - ${local_ip}:22
+                roles:
+                  - master
+                  - amd64
+            image:
+              - labring/kubernetes-docker:v1.25.0
+            ssh:
+              pk: /root/.ssh/id_rsa
+              port: 22
+              user: root
+          EOF
+          sudo sealos apply --cluster-root=/data/sealos/  -f /tmp/apply/Clusterfile --debug
