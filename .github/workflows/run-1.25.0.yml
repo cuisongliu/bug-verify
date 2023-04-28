@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Auto install sealos
-        uses: labring/sealos-action@v0.0.4
+        uses: labring/sealos-action@v0.0.7
         with:
           type: install
           sealosVersion: 4.2.0
@@ -32,3 +32,7 @@ jobs:
         working-directory: sealos#build/build-kubefile
         run: |
           sudo sealos run --debug  docker.io/labring/kubernetes:v1.25.0
+          mkdir -p "$HOME/.kube"
+          sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
+          sudo chown "$(whoami)" "$HOME/.kube/config"
+          sudo kubectl get node
