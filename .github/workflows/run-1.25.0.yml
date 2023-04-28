@@ -11,11 +11,6 @@ jobs:
   sealos:
     runs-on: ubuntu-latest
     steps:
-      - name: Auto install sealos
-        uses: labring/sealos-action@v0.0.7
-        with:
-          type: install
-          sealosVersion: 4.2.0
       - name: Remove containerd && docker
         uses: labring/sealos-action@v0.0.7
         with:
@@ -31,6 +26,10 @@ jobs:
       - name: Build sealos image by kubefile
         working-directory: sealos#build/build-kubefile
         run: |
+          wget https://github.com/labring/sealos/releases/download/v4.2.0/sealos_4.2.0_linux_amd64.tar.gz
+          tar -zxvf sealos_4.2.0_linux_amd64.tar.gz sealos
+          chmod +x sealos
+          sudo mv sealos /usr/local/bin/
           sudo sealos run --debug  docker.io/labring/kubernetes:v1.25.0
           mkdir -p "$HOME/.kube"
           sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
