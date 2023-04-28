@@ -16,13 +16,6 @@ jobs:
         with:
           type: prune
 
-      - name: Install sealos version
-        run: |
-          sudo sealos version  
-          sudo sealctl version 
-          sudo buildah version
-
-
       - name: Build sealos image by kubefile
         working-directory: sealos#build/build-kubefile
         run: |
@@ -30,6 +23,7 @@ jobs:
           tar -zxvf sealos_4.2.0_linux_amd64.tar.gz sealos
           chmod +x sealos
           sudo mv sealos /usr/local/bin/
+          sudo sealos version
           sudo sealos run --debug  docker.io/labring/kubernetes:v1.25.0
           mkdir -p "$HOME/.kube"
           sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
