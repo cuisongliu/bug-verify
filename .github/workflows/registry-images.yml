@@ -16,18 +16,18 @@ jobs:
       - name: Auto install sealos
         uses: labring/sealos-action@v0.0.7
         with:
-          type: install
-          sealosVersion: 4.2.2
-
+          type: prune
+      - name: Build sealos image by kubefile
+        run: |
+          sudo wget https://github.com/labring/sealos/releases/download/v4.2.2/sealos_4.2.2_linux_amd64.tar.gz
+          sudo tar -zxvf sealos_4.2.2_linux_amd64.tar.gz sealos
+          sudo chmod +x sealos
+          sudo mv sealos /usr/local/bin/
       - name: Install sealos version
         run: |
           sudo sealos version  
-          sudo sealctl version 
-          sudo buildah version
-
 
       - name: Build sealos image by kubefile
-        working-directory: sealos#build/build-kubefile
         run: |
           sudo sealos run labring/kubernetes:v1.25.0 labring/calico:v3.24.1 labring/openebs:v3.4.0 --debug
           sudo wget https://github.com/apecloud/kubeblocks/releases/download/v0.5.2/kbcli-linux-amd64-v0.5.2.tar.gz
