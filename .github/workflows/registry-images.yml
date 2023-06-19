@@ -34,5 +34,17 @@ jobs:
           sudo tar -zxvf kbcli-linux-amd64-v0.5.2.tar.gz
           sudo mv linux-amd64/kbcli /usr/local/bin/
           sudo kbcli version
-          sudo kbcli kubeblocks install --monitor=false
+#          sudo kbcli kubeblocks install --monitor=false --set snapshot-controller.enabled=false
+          sudo kbcli kubeblocks install
           sudo kbcli kubeblocks status
+          sudo kbcli cluster create pg-cluster --cluster-definition=postgresql --set cpu=2,memory=2Gi,replicas=2,storage=20Gi --namespace kb-system
+          sudo kbcli cluster create mongodb-cluster  --cluster-definition=mongodb   --set cpu=1,memory=1Gi,storage=10Gi --namespace kb-system
+          sudo kbcli cluster create redis-cluster  --cluster-definition=redis   --set type=redis,cpu=1,memory=1Gi,replicas=2,storage=10Gi --set type=redis-sentinel,cpu=1,memory=1Gi,replicas=3,storage=1Gi --namespace kb-system
+          sudo kbcli cluster create mysql-cluster --cluster-definition=apecloud-mysql --set cpu=2000m,memory=2Gi,storage=20Gi --namespace kb-system
+          sudo kbcli cluster describe pg-cluster
+          sudo kbcli cluster describe mongodb-cluster
+          sudo kbcli cluster describe redis-cluster
+          sudo kbcli cluster describe mysql-cluster
+          sudo kubectl get node
+          sudo kubectl get pod -A
+          sudo kubectl get pod -n kb-system -o yaml | grep "image:" | sed 's/- /  /g' | awk '{print $2}' | sort | uniq
