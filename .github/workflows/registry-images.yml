@@ -23,6 +23,8 @@ jobs:
           sudo tar -zxvf sealos_4.2.2_linux_amd64.tar.gz sealos
           sudo chmod +x sealos
           sudo mv sealos /usr/local/bin/
+          sudo sealos version
+
       - name: Build sealos image by kubefile
         run: |
           sudo sealos run labring/kubernetes:v1.25.0 labring/calico:v3.24.1 labring/openebs:v3.4.0 --debug
@@ -30,7 +32,6 @@ jobs:
           sudo tar -zxvf kbcli-linux-amd64-v0.5.2.tar.gz
           sudo mv linux-amd64/kbcli /usr/local/bin/
           sudo kbcli version
-#          sudo kbcli kubeblocks install --monitor=false --set snapshot-controller.enabled=false
           sudo kbcli kubeblocks install
           sudo kbcli kubeblocks status
           sudo kbcli cluster create pg-cluster --cluster-definition=postgresql --set cpu=2,memory=2Gi,replicas=2,storage=20Gi --namespace kb-system
