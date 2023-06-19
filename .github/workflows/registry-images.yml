@@ -41,8 +41,4 @@ jobs:
           sudo kubectl get node
           sudo kubectl get pod -A
           sleep 120s
-          sudo kbcli cluster describe pg-cluster
-          sudo kbcli cluster describe mongodb-cluster
-          sudo kbcli cluster describe redis-cluster
-          sudo kbcli cluster describe mysql-cluster
           sudo kubectl get pod -n kb-system -o yaml | grep "image:" | sed 's/- /  /g' | awk '{print $2}' | sort | uniq
