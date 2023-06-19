@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Auto install sealos
-        uses: labring/sealos-action@v0.0.4
+        uses: labring/sealos-action@v0.0.7
         with:
           type: install
           sealosVersion: 4.2.2
