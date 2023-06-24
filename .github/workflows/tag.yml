@@ -23,7 +23,9 @@ jobs:
           chmod +x sealos
           sudo mv sealos /usr/local/bin/
           sudo sealos version
-          sudo sealos pull labring/kubernetes:v1.23.8 
-          sudo sealos tag labring/kubernetes:v1.23.8 registry.cn-hongkong.aliyuncs.com/cuisongliu-labring/kubernetes-aa:v1.23.8
+          sudo sealos pull labring/kubernetes:v1.23.9
+          sudo sealos tag labring/kubernetes:v1.23.9 registry.cn-hongkong.aliyuncs.com/cuisongliu-labring/kubernetes-aa:v1.23.9
           sudo sealos login -u cuisongliu@1186388767322904 -p ${{ secrets.A_REGISTRY_TOKEN }}  registry.cn-hongkong.aliyuncs.com
-          sudo sealos push registry.cn-hongkong.aliyuncs.com/cuisongliu-labring/kubernetes-aa:v1.23.8
+          date
+          sudo sealos push registry.cn-hongkong.aliyuncs.com/cuisongliu-labring/kubernetes-aa:v1.23.9
+          date
