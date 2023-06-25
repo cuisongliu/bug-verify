@@ -6,26 +6,26 @@ name: TestBug#tag-aliyun
 on:
   workflow_dispatch:
     inputs:
+env:
+  USERNAME: ${{ vars.A_REGISTRY_USERNAME }}
+  PASSWORD: ${{ secrets.A_REGISTRY_TOKEN }}
+
 
 jobs:
   sealos:
     runs-on: ubuntu-latest
     steps:
-      - name: Remove containerd && docker
-        uses: labring/sealos-action@v0.0.7
-        with:
-          type: prune
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Build sealos image by kubefile
+      - name: check podman
         run: |
-          wget https://github.com/labring/sealos/releases/download/v4.2.0/sealos_4.2.0_linux_amd64.tar.gz
-          tar -zxvf sealos_4.2.0_linux_amd64.tar.gz sealos
-          chmod +x sealos
-          sudo mv sealos /usr/local/bin/
-          sudo sealos version
-          sudo sealos pull labring/kubernetes:v1.23.9
-          sudo sealos tag labring/kubernetes:v1.23.9 registry.cn-hongkong.aliyuncs.com/cuisongliu-labring/kubernetes-aa:v1.23.9
-          sudo sealos login -u cuisongliu@1186388767322904 -p ${{ secrets.A_REGISTRY_TOKEN }}  registry.cn-hongkong.aliyuncs.com
-          date
-          sudo sealos push registry.cn-hongkong.aliyuncs.com/cuisongliu-labring/kubernetes-aa:v1.23.9
-          date
+          sudo podman version
+
+      - name: sync images
+        run: |
+          sudo podman run -it --rm -v ${PWD}:/workspace -w /workspace quay.io/skopeo/stable:latest \
+          date &&
+          sync --src yaml --dest docker skopeo/auto-sync-image-0.yaml ${{ vars.A_REGISTRY_NAME }}/${{ vars.A_REGISTRY_REPOSITORY }} \
+          --dest-username $USERNAME --dest-password "$PASSWORD" \
+          --keep-going --retry-times 2 --all && date
